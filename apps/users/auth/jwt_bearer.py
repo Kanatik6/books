@@ -3,8 +3,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends
 
 from decouple import config
-from .jwt_handler import decodeJWT
 import jwt
+
+from apps.users.auth.jwt_handler import decodeJWT
 
 
 JWT_SECRET = config('secret')

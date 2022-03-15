@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from decouple import config
 
+
 USER = config('user')
 PASSWORD = config('password')
 DB = config('db')
@@ -13,10 +14,11 @@ HOST = config('host')
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}/{DB}"
 
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-print('base')
+
 Base = declarative_base()
 
 def get_db():
@@ -25,3 +27,4 @@ def get_db():
         yield db
     finally:
         db.close()
+

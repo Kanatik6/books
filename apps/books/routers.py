@@ -1,12 +1,16 @@
-from fastapi import Depends, APIRouter
+import sys,os
+sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("..."))
+
 from fastapi.responses import JSONResponse
+from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
-from utils.database import get_db
-from .models import Book, Part
-from . import schemas, servises
-from users.auth.jwt_bearer import JWTBearer
-# from os.path import exists
+from apps.users.auth.jwt_bearer import JWTBearer
+from apps.utils.permissions import author_permission
+from apps.database import get_db
+from apps.books.models import Book, Part
+from apps.books import schemas, servises
 
 
 router = APIRouter(prefix='/books')
@@ -17,9 +21,7 @@ router = APIRouter(prefix='/books')
             response_model=list[schemas.BookReturn]
             )
 def get_books(db: Session = Depends(get_db)):
-    print(1)
     db_book = db.query(Book).all()
-    print(2)
     if db_book:
         return db_book
     return JSONResponse({'message': 'no books'})
@@ -46,7 +48,7 @@ def create_book(*, db: Session = Depends(get_db), book: schemas.BookBase):
 # put book
 @router.put("/{id}/",
             response_model=schemas.BookReturn,
-            dependencies=[Depends(JWTBearer())]
+            dependencies=[Depends(author_permission)]
             )
 def put_book(*, db: Session = Depends(get_db),
                    book: schemas.BookBase,
@@ -78,7 +80,7 @@ def delete_book(*, db: Session = Depends(get_db),
 
 
 # set books
-@router.post("/set_book/",
+@router.post("/",
             dependencies=[Depends(JWTBearer())])
 def set_book(*, db: Session = Depends(get_db),
                    book_ids: list[int],

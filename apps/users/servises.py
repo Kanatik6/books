@@ -2,20 +2,21 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from users.auth.jwt_handler import singJWT
-from .auth.jwt_handler import decodeJWT,get_payload_jwt
 
-from users import models, schemas
+from apps.users.auth.jwt_handler import singJWT
+from apps.users.auth.jwt_handler import decodeJWT,get_payload_jwt
+from apps.users import  schemas
+from apps.users.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_user(db: Session, user: schemas.User):
     # if username is exist, raise exception
-    if db.query(models.User.id).filter_by(username=user.username).first() != None:
+    if db.query(User.id).filter_by(username=user.username).first() != None:
         raise HTTPException(
             status_code=400, detail='username must be unique, try again')
-    user = models.User(username=user.username,
+    user = User(username=user.username,
                        last_name=user.last_name,
                        hashed_password=pwd_context.hash(user.password))
     db.add(user)
@@ -25,8 +26,8 @@ def create_user(db: Session, user: schemas.User):
 
 
 def login_user(db: Session, user: schemas.UserLogin):
-    db_user = db.query(models.User.id,models.User.hashed_password).filter(
-        models.User.username==user.username).first()
+    db_user = db.query(User.id,User.hashed_password).filter(
+        User.username==user.username).first()
     print(db_user)
     if not db_user:
         raise HTTPException(status_code=401, detail='user not found')
@@ -49,7 +50,7 @@ def login_refresh_user(token:str):
 
 
 def delete_user(db: Session, user: schemas.UserLogin):
-    db_user = db.query(models.User).filter_by(
+    db_user = db.query(User).filter_by(
         username=user.username).first()
     if not db_user:
         raise HTTPException(status_code=401, detail='user not found')

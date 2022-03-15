@@ -2,4 +2,8 @@
 env
 .vscode
 __pycache__
+<<<<<<< HEAD
 files/*
+=======
+files/*
+>>>>>>> 2d4fa6d (update)

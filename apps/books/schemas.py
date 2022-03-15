@@ -32,7 +32,7 @@ class BookReturn(BaseModel):
     title: str
     descriptions: str
     file_path: str
-    parts: list[PartReturn] | None = None
+    parts: list[PartReturn] |None = None
 
     class Config:
         orm_mode = True

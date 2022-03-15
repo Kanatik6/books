@@ -1,19 +1,19 @@
-from sqlalchemy.orm import Session
-from fastapi.exceptions import HTTPException
 from fastapi import Depends
 from decouple import config
-
-from users.auth.jwt_bearer import JWTBearer
-from apps.books.models import Book
-from users.models import User
-from database import get_db
+from fastapi.exceptions import HTTPException
 import jwt
+
+from apps.books.models import Book
+from apps.users.auth.jwt_bearer import JWTBearer
+from sqlalchemy.orm import Session
+from apps.users.models import User
+from apps.database import get_db
 
 JWT_SECRET = config('secret')
 JWT_ALGORITHM = config('algorithm')
 
 
-def test_permission(*,token: str = Depends(JWTBearer()),db:Session = Depends(get_db),id:int):
+def author_permission(*,token: str = Depends(JWTBearer()),db:Session = Depends(get_db),id:int):
     payload = jwt.decode(token, JWT_SECRET, algorithms=[
                          JWT_ALGORITHM], verify_signature=False)
     user_books = db.query(User.books).filter_by(id=payload.get("userID")).first()

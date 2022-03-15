@@ -1,14 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,DateTime,Table
+from sqlalchemy import Column, Integer, String, ForeignKey,Table
 from sqlalchemy.orm import relationship
 
-from utils.database import Base
-from users.models import User
-
-
-book_users = Table('book_users', Base.metadata,
-    Column('book_id', ForeignKey('books.id'), primary_key=True),
-    Column('users_id', ForeignKey('users.id'), primary_key=True)
-)
+from apps.database import Base
 
 
 class Book(Base):
@@ -19,7 +12,13 @@ class Book(Base):
     descriptions = Column(String)
     file_path = Column(String,unique=True)
 
-    users = relationship(User, secondary="book_users", back_populates='books')
+    users = relationship("User", secondary="book_users", back_populates='books')
+
+
+book_users = Table('book_users', Base.metadata,
+    Column('book_id', ForeignKey('books.id'), primary_key=True),
+    Column('users_id', ForeignKey('users.id'), primary_key=True),
+)
 
 
 class Part(Base):
@@ -27,7 +26,7 @@ class Part(Base):
     id = Column(Integer, primary_key=True)
 
     title = Column(String, nullable=False)
-    descriptions = Column(String,nullable=False)
+    descriptions = Column(String)
     
-    book_id = Column(Integer,ForeignKey('books.id'))
+    book_id = Column('book_id',ForeignKey('books.id'))
     book = relationship('Book',backref='parts')
