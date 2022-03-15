@@ -11,4 +11,4 @@ class User(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     
-    books = relationship("Book", secondary="book_users", back_populates='users')
+    favorite_books = relationship("Book", secondary="book_users", back_populates='in_favorite_users')

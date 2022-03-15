@@ -11,7 +11,7 @@ from apps.books.routers import router as router_book
 def create_db():
     Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Shop")
+app = FastAPI(title="Author Today")
 
 @app.on_event("startup")
 def on_startup():

@@ -10,9 +10,12 @@ class Book(Base):
 
     title = Column(String, nullable=False,unique=True)
     descriptions = Column(String)
-    file_path = Column(String,unique=True)
+    file_name = Column(String)
 
-    users = relationship("User", secondary="book_users", back_populates='books')
+    author_id = Column(Integer,ForeignKey('users.id'))
+    author = relationship("User",backref='author_books')
+    
+    in_favorite_users = relationship("User", secondary="book_users", back_populates='favorite_books')
 
 
 book_users = Table('book_users', Base.metadata,
